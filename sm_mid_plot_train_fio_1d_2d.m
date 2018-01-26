@@ -1,7 +1,8 @@
 function sm_mid_plot_train_fio_1d_2d(fio)
 
 iskfile = fio.iskfile;
-nspk = sum(fio.locator);
+%nspk = sum(fio.locator);
+nspk = 0;
 ms = 3;
 
 figure;

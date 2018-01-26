@@ -1,4 +1,4 @@
-function mid_dir_sm_analysis_procedure(varargin)
+function sm_mid_dir_sm_analysis_procedure(varargin)
 
 library('mid_sm');
 
@@ -51,7 +51,12 @@ else
 end
 
 
-% mid_sm_plot_projinfo(projinfo);
+mid_sm_plot_projinfo(projinfo);
+
+
+sm_mid_plot_fio_filters_nonlinearities(fio);
+
+mid_sm_plot_projinfo_mid_types(projinfo, fio);
 
 return;
 
