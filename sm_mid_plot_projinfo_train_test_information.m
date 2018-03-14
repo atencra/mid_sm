@@ -1,6 +1,6 @@
 function sm_mid_plot_projinfo_train_test_information(fraction, ifrac_train_mtx, ifrac_train_mn, ...
     ifrac_train_std, ifrac_test_mtx, ifrac_test_mn, ifrac_test_std, titlestr)
-% mid_plot_projinfo_train_test_information - Show MID information results
+% sm_mid_plot_projinfo_train_test_information - Show MID information results
 %
 % Information values were calculated for different fractions of the data.
 % We fit a line to the information values versus the inverse of the data

@@ -1,4 +1,4 @@
-function sm_mid_dir_sm_analysis_procedure(varargin)
+function sm_mid_sm_analysis_procedure(varargin)
 
 library('mid_sm');
 
@@ -22,15 +22,15 @@ if ( options.batch )
 
         cd(nameFolds{i});
 
-        mid_dir_sm_file_names_to_file_struct('savepath', '.');
+        sm_mid_dir_file_names_to_file_struct('savepath', '.');
 
-        mid_dir_sm_file_struct_to_filters;
+        sm_mid_dir_file_struct_to_filters;
 
-        mid_dir_plot_filter_fio;
+        sm_mid_dir_plot_filter_fio;
 
-        mid_dir_plot_filter_fio2d;
+        sm_mid_dir_plot_filter_fio2d;
 
-        mid_dir_filter_to_fio_info('stimfolder', stimfolder, 'batch', 1);
+        sm_mid_dir_filter_to_fio_info('stimfolder', stimfolder, 'batch', 1);
 
         cd(outerfolder);
 
@@ -38,56 +38,39 @@ if ( options.batch )
 
 else
 
-    mid_dir_file_names_to_file_struct('savepath', '.');
+    sm_mid_dir_file_names_to_file_struct('savepath', '.');
 
-    mid_dir_file_struct_to_filters;
+    sm_mid_dir_file_struct_to_filters;
 
-    mid_dir_plot_filter_fio;
+    sm_mid_dir_plot_filter_fio;
 
-    mid_dir_plot_filter_fio2d;
+    sm_mid_dir_plot_filter_fio2d;
 
-    mid_dir_filter_to_fio_info('stimfolder', stimfolder);
+    sm_mid_dir_filter_to_fio_info('stimfolder', stimfolder);
 
 end
 
 
-mid_sm_plot_projinfo(projinfo);
-
+sm_mid_plot_projinfo(projinfo);
 
 sm_mid_plot_fio_filters_nonlinearities(fio);
 
-mid_sm_plot_projinfo_mid_types(projinfo, fio);
+sm_mid_plot_projinfo_mid_types(projinfo, fio);
 
 return;
 
 
-% Next function to make:
-%
-% Plot the filters and nonlinearities, and place the information
-% values in the title, and classify the cell as one of the classes
-% for the paper: STA and MID1, no STA and MID1, MID1 only, MID1 and MID2
-%
-% 
 
 
 
-void  meanresp(double *sta,double *stimuli, unsigned long Nn,unsigned long fsize,int locator[],unsigned long Nspikes,  unsigned long Ntrials){
-  unsigned long i,k;
-  double temp;
-  for(i=1;i<=Nn;i++)   sta[i]=0;
-  double rbar;
-  rbar=(double)Nspikes/(double)Ntrials;
-  for(k=1;k<=Ntrials;k++){
-    temp= ((double)locator[k]-rbar)/(double)Ntrials;
-    for(i=1;i<=Nn;i++){
-      sta[i]+=stimuli[(k-1)*fsize+i]*temp;
-    }
-  }
-}
+% To resample nonlinearities:
 
 
+sm_mid_dir_filter_stimulus_locator_to_fio_resample(varargin)
 
+which calls:
 
+    [fio] = mid_filter_stimulus_locator_fio_resample(data, stimulus, locator)
 
 
 

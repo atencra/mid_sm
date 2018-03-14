@@ -1,4 +1,4 @@
-function mHist = hist2d (mX, vYEdge, vXEdge)
+function mHist = sm_hist2d (mX, vYEdge, vXEdge)
 %function mHist = hist2d ([vY, vX], vYEdge, vXEdge)
 % 2 Dimensional Histogram
 % Counts number of points in the bins defined by vYEdge, vXEdge.

@@ -33,6 +33,8 @@ for i = 1:4
 
 end % (for i)
 
+clear('xbins', 'pspkx');
+
 
 
 % Plot the MID1 nonlinearities
@@ -55,6 +57,8 @@ for i = 1:4
         ylabel('MID1');
     end
 end % (for i)
+
+clear('xbins', 'pspkx');
 
 
 
@@ -79,6 +83,7 @@ for i = 1:4
     end
 end % (for i)
 
+clear('xbins', 'pspkx');
 
 
 

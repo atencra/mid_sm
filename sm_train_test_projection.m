@@ -76,12 +76,18 @@ f4 = filters{4};
 
 for i = nc:ntrials
 
-   x1prior(i) =  sum( sum ( stimulus( index_freq, i-nc+1:i ) .* f1 ) ); % inner product
-   x2prior(i) =  sum( sum ( stimulus( index_freq, i-nc+1:i ) .* f2 ) ); % inner product
-   x3prior(i) =  sum( sum ( stimulus( index_freq, i-nc+1:i ) .* f3 ) ); % inner product
-   x4prior(i) =  sum( sum ( stimulus( index_freq, i-nc+1:i ) .* f4 ) ); % inner product
+    x1prior(i) =  sum( sum ( stimulus( index_freq, i-nc+1:i ) .* f1 ) ); % inner product
+    x2prior(i) =  sum( sum ( stimulus( index_freq, i-nc+1:i ) .* f2 ) ); % inner product
+    x3prior(i) =  sum( sum ( stimulus( index_freq, i-nc+1:i ) .* f3 ) ); % inner product
+    x4prior(i) =  sum( sum ( stimulus( index_freq, i-nc+1:i ) .* f4 ) ); % inner product
+
+    if ( mod(i,10000)==0 )
+        fprintf('Calculating projections #%.0f...\n', i);
+    end
 
 end % (for i)
+
+fprintf('\n');
 
 
 % For the training set:
@@ -158,6 +164,7 @@ xspktest{4} = single(x4spktest);
 
 % [length(xtrain) length(xtest) length(xtrain_locator) length(xtest_locator)]
 
+fprintf('\nFinished running train_test_projection ...\n\n');
 
 return;
 

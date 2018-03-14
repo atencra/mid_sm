@@ -1,4 +1,4 @@
-function [irep1, irep2, irep3, irep4] = training_set_indices(ntrials)
+function [irep1, irep2, irep3, irep4] = sm_training_set_indices(ntrials)
 % training_set_indices - indices for training set repetition 
 %
 % [irep1, irep2, irep3, irep4] = training_set_indices(ntrials)
