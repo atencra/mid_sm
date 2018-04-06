@@ -281,10 +281,10 @@ clear('xtotal', 'ytotal');
 clear('xsort', 'ysort');
 
 
-%iskfile = strrep(iskfile, '_', '-');
-%suptitle(sprintf('%ss', iskfile));
+iskfile = strrep(iskfile, '_', '-');
+suptitle(sprintf('%ss', iskfile));
 set(gcf,'position', [238 404 643 580]);
-%print_mfilename(mfilename);
+print_mfilename(mfilename);
 
 fprintf('Finished plot_mean_filters_nonlinearities\n');
 
