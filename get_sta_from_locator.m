@@ -25,6 +25,8 @@ function sta = get_sta_from_locator(locator, stimulus, numtbins)
 %
 % sta = get_sta_from_locator(locator, stimulus, numtbins)
 
+fprintf('%s\n', mfilename);
+
 if ( nargin == 2 )
    numtbins = 20;
 end
@@ -33,9 +35,14 @@ sta = zeros(size(stimulus,1), numtbins);
 
 
 for i = numtbins:length(locator)
-   if ( locator(i) )
-      sta = sta + locator(i) * stimulus(:,i-numtbins+1:i);
-   end
+
+    if ( mod(i,50000)==0 )
+        fprintf('i = %.0f / %.0f\n', i, length(locator));
+    end
+
+    if ( locator(i) )
+        sta = sta + locator(i) * stimulus(:,i-numtbins+1:i);
+    end
 end
 
 
