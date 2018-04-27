@@ -1,7 +1,7 @@
 # mid_sm
 Squirrel Monkey MID Analysis
 
-A collection of function to analyze physiological data recorded from the auditory cortex.
+A collection of functions to analyze physiological data recorded from the auditory cortex.
 
 Data were recorded from neurons in the auditory cortex while a dynamic, broadband sound was presented. 
 This type of sounds allows us to reconstruct system functions, termed receptive fields for each neuorn.
