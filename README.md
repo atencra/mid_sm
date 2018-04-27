@@ -18,3 +18,5 @@ for each neuron that are multidimensional, and account for more information than
 This repo contains functions to analyze the STA and MIDs for each neuron. We also estimate the information accounted for by each model.
 
 Multiple functions are present that can be used to plot the STA and MIDs for each neurons.
+
+These analyses are a work in progress and are being developed for publication in an academic journal.
