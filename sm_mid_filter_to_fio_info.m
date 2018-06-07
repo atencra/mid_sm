@@ -56,30 +56,29 @@ sta{4} = reshape( data.filter_matrix_sta(:,4), numfbins, numtbins );
 
 
 [x0train, x0test, x0train_locator, x0test_locator] = ...
-   train_test_projection(sta, locator, stimulus, index_freq);
+    sm_train_test_projection(sta, locator, stimulus, index_freq);
 
+[x0bins, pspk, px0, px0spk, pspkx0] = sm_proj_prob_dist(x0train, x0train_locator);
 
-[x0bins, pspk, px0, px0spk, pspkx0] = proj_prob_dist(x0train, x0train_locator);
+[ifrac0_train] = sm_train_test_info_fraction(x0bins, x0train_locator, x0train, fraction); 
 
-[ifrac0_train] = train_test_info_fraction(x0bins, x0train_locator, x0train, fraction); 
-
-[ifrac0_test] = train_test_info_fraction(x0bins, x0test_locator, x0test, fraction); 
+[ifrac0_test] = sm_train_test_info_fraction(x0bins, x0test_locator, x0test, fraction); 
 
 [ifrac0_mn_train, ifrac0_std_train, ifrac0_mtx_train] = ...
-   train_test_info_fraction_mean_std(fraction, ifrac0_train);
+    sm_train_test_info_fraction_mean_std(fraction, ifrac0_train);
 
 [ifrac0_mn_test, ifrac0_std_test, ifrac0_mtx_test] = ...
-   train_test_info_fraction_mean_std(fraction, ifrac0_test);
+    sm_train_test_info_fraction_mean_std(fraction, ifrac0_test);
 
 [info0_extrap_train, info0_extrap_test] = ...
-   train_test_info_extrapolate(fraction, ifrac0_mtx_train, ifrac0_mn_train, ...
-         ifrac0_mtx_test, ifrac0_mn_test);
+    sm_train_test_info_extrapolate(fraction, ifrac0_mtx_train, ifrac0_mn_train, ...
+        ifrac0_mtx_test, ifrac0_mn_test);
 
-    plot_filters_nonlinearities(sta, x0bins, pspk, pspkx0, 'STA Analysis');
+plot_filters_nonlinearities(sta, x0bins, pspk, pspkx0, 'STA Analysis');
 
-    plot_train_test_information(fraction, ifrac0_mtx_train, ...
-       ifrac0_mn_train, ifrac0_std_train, ifrac0_mtx_test, ifrac0_mn_test, ...
-       ifrac0_std_test, 'STA Info Analysis');
+plot_train_test_information(fraction, ifrac0_mtx_train, ...
+    ifrac0_mn_train, ifrac0_std_train, ifrac0_mtx_test, ifrac0_mn_test, ...
+        ifrac0_std_test, 'STA Info Analysis');
 
 
 % Save STA data
@@ -117,23 +116,23 @@ mid1{3} = reshape( data.filter_matrix_test2_v1(:,3), numfbins, numtbins );
 mid1{4} = reshape( data.filter_matrix_test2_v1(:,4), numfbins, numtbins );
 
 [x1train, x1test, x1train_locator, x1test_locator] = ...
-   train_test_projection(mid1, locator, stimulus, index_freq);
+    sm_train_test_projection(mid1, locator, stimulus, index_freq);
 
-[x1bins, pspk, px1, px1spk, pspkx1] = proj_prob_dist(x1train, x1train_locator);
+[x1bins, pspk, px1, px1spk, pspkx1] = sm_proj_prob_dist(x1train, x1train_locator);
 
-[ifrac1_train] = train_test_info_fraction(x1bins, x1train_locator, x1train, fraction);
+[ifrac1_train] = sm_train_test_info_fraction(x1bins, x1train_locator, x1train, fraction);
 
-[ifrac1_test] = train_test_info_fraction(x1bins, x1test_locator, x1test, fraction);
+[ifrac1_test] = sm_train_test_info_fraction(x1bins, x1test_locator, x1test, fraction);
 
 [ifrac1_mn_train, ifrac1_std_train, ifrac1_mtx_train] = ...
-   train_test_info_fraction_mean_std(fraction, ifrac1_train);
+    sm_train_test_info_fraction_mean_std(fraction, ifrac1_train);
 
 [ifrac1_mn_test, ifrac1_std_test, ifrac1_mtx_test] = ...
-   train_test_info_fraction_mean_std(fraction, ifrac1_test);
+    sm_train_test_info_fraction_mean_std(fraction, ifrac1_test);
 
 [info1_extrap_train, info1_extrap_test] = ...
-   train_test_info_extrapolate(fraction, ifrac1_mtx_train, ifrac1_mn_train, ...
-   ifrac1_mtx_test, ifrac1_mn_test);
+    sm_train_test_info_extrapolate(fraction, ifrac1_mtx_train, ifrac1_mn_train, ...
+        ifrac1_mtx_test, ifrac1_mn_test);
 
 
 plot_filters_nonlinearities(mid1, x1bins, pspk, pspkx1, 'MID1 Analysis');
@@ -175,22 +174,22 @@ mid2{3} = reshape( data.filter_matrix_test2_v2(:,3), numfbins, numtbins );
 mid2{4} = reshape( data.filter_matrix_test2_v2(:,4), numfbins, numtbins );
 
 [x2train, x2test, x2train_locator, x2test_locator] = ...
-   train_test_projection(mid2, locator, stimulus, index_freq);
+   sm_train_test_projection(mid2, locator, stimulus, index_freq);
 
-[x2bins, pspk, px2, px2spk, pspkx2] = proj_prob_dist(x2train, x2train_locator);
+[x2bins, pspk, px2, px2spk, pspkx2] = sm_proj_prob_dist(x2train, x2train_locator);
 
-[ifrac2_train] = train_test_info_fraction(x2bins, x2train_locator, x2train, fraction);
+[ifrac2_train] = sm_train_test_info_fraction(x2bins, x2train_locator, x2train, fraction);
 
-[ifrac2_test] = train_test_info_fraction(x2bins, x2test_locator, x2test, fraction);
+[ifrac2_test] = sm_train_test_info_fraction(x2bins, x2test_locator, x2test, fraction);
 
 [ifrac2_mn_train, ifrac2_std_train, ifrac2_mtx_train] = ...
-   train_test_info_fraction_mean_std(fraction, ifrac2_train);
+   sm_train_test_info_fraction_mean_std(fraction, ifrac2_train);
 
 [ifrac2_mn_test, ifrac2_std_test, ifrac2_mtx_test] = ...
-   train_test_info_fraction_mean_std(fraction, ifrac2_test);
+   sm_train_test_info_fraction_mean_std(fraction, ifrac2_test);
 
 [info2_extrap_train, info2_extrap_test] = ...
-   train_test_info_extrapolate(fraction, ifrac2_mtx_train, ifrac2_mn_train, ...
+   sm_train_test_info_extrapolate(fraction, ifrac2_mtx_train, ifrac2_mn_train, ...
    ifrac2_mtx_test, ifrac2_mn_test);
 
 
@@ -228,22 +227,22 @@ fio.pspkx2 = pspkx2;
 fprintf('\nMID1 and MID2\n');
 
 [x1binedges, x2binedges, pspk, px1x2, px1x2spk, pspkx1x2] = ...
-    proj_prob_dist_2d(x1train_locator, x1train, x2train);
+    sm_proj_prob_dist_2d(x1train_locator, x1train, x2train);
 
-[ifrac12_train] = train_test_info_fraction_2d(x1binedges, x2binedges, ...
+[ifrac12_train] = sm_train_test_info_fraction_2d(x1binedges, x2binedges, ...
     x1train_locator, x1train, x2train, fraction);
 
-[ifrac12_test] = train_test_info_fraction_2d(x1binedges, x2binedges, ...
+[ifrac12_test] = sm_train_test_info_fraction_2d(x1binedges, x2binedges, ...
     x1test_locator, x1test, x2test, fraction);
 
 [ifrac12_mn_train, ifrac12_std_train, ifrac12_mtx_train] = ...
-   train_test_info_fraction_mean_std(fraction, ifrac12_train);
+   sm_train_test_info_fraction_mean_std(fraction, ifrac12_train);
 
 [ifrac12_mn_test, ifrac12_std_test, ifrac12_mtx_test] = ...
-   train_test_info_fraction_mean_std(fraction, ifrac12_test);
+   sm_train_test_info_fraction_mean_std(fraction, ifrac12_test);
 
 [info12_extrap_train, info12_extrap_test] = ...
-   train_test_info_extrapolate(fraction, ifrac12_mtx_train, ifrac12_mn_train, ...
+   sm_train_test_info_extrapolate(fraction, ifrac12_mtx_train, ifrac12_mn_train, ...
    ifrac12_mtx_test, ifrac12_mn_test);
 
 plot_train_test_information(fraction, ifrac12_mtx_train, ...

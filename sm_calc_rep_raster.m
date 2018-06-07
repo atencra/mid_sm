@@ -16,10 +16,20 @@ for i = 1:length(spktimes_trial)
     spktimes_trial{i} = spktimes(spktimes >= ITtrigger(i,1) & spktimes <= ITtrigger(i,2)) - ITtrigger(i,1);
 end
 
+
 edges = 0:binsize_ms:stimlen_ms;
 
-%raster = cell2mat(cellfun(@(x) histcounts(x, edges), spktimes_trial, 'UniformOutput', 0));
-raster = cell2mat(cellfun(@(x) histc(x, edges), spktimes_trial, 'UniformOutput', 0));
+raster = zeros(length(spktimes_trial),length(edges));
+
+for i = 1:length(spktimes_trial)
+    if ( length(spktimes_trial{i})>1 )
+        raster(i,:) = histc(spktimes_trial{i},edges);
+    end
+end
+
+
+%%raster = cell2mat(cellfun(@(x) histcounts(x, edges), spktimes_trial, 'UniformOutput', 0));
+%raster = cell2mat(cellfun(@(x) histc(x, edges), spktimes_trial, 'UniformOutput', 0));
 
 end
 

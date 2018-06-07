@@ -1,4 +1,7 @@
 function sm_dir_append_pdfs(varargin)
+%
+%
+% =============================================================================
 % sm_dir_append_pdfs Combine pdfs in folder(s) into a single pdf
 %
 % Goes through the current directory, or through multiple directories, looks
@@ -24,6 +27,7 @@ function sm_dir_append_pdfs(varargin)
 % Example calls:
 %
 % sm_dir_append_pdfs('filepattern', 'mtf-highres', 'batch', 1, 'process', 1);
+% sm_dir_append_pdfs('filepattern', 'mtf-highres', 'batch', 1, 'outfolder', outf);
 %
 %   For this call the output file name will be: mtf-highres-combined.pdf
 %
@@ -32,6 +36,9 @@ function sm_dir_append_pdfs(varargin)
 %       3. Any previously created combined pdf with the same name will be 
 %          overwritten.
 %    
+% =============================================================================
+%
+%
 
 library('export_fig');
 
@@ -84,8 +91,6 @@ for ii = 1:length(folders)
 
         if ( ~initialized )
             [status, msg, msgid] = copyfile(infile, fullfile(outfolder, basefile));
-            disp(status)
-            disp(msg)
             initialized = 1;
             continue;
         end

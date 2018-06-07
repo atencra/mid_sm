@@ -1,4 +1,4 @@
-function nevfiles = sm_iskfile_to_nevfile(iskfiles, folder)
+function nevfile = sm_iskfile_to_nevfile(iskfile, folder)
 % sm_iskfile_to_nevfile NEV file name from ISK file name
 %
 % nevfiles = sm_iskfile_to_nevfile(iskfiles) converts the file(s) in iskfiles
@@ -10,50 +10,37 @@ function nevfiles = sm_iskfile_to_nevfile(iskfiles, folder)
 %
 %
 
-if ischar(iskfiles)
-    iskfiles = {iskfiles};
-end
-
 if nargin == 1
     folder = '.';
 end
 
-for i = 1:length(iskfiles)
 
-    infile = iskfiles{i};
-    datetime = regexp(infile, '^\d{6}_\d{6}','match','once');
-    parts = strsplit(datetime,'_'); 
+infile = iskfile;
+datetime = regexp(infile, '^\d{6}_\d{6}','match','once');
+parts = strsplit(datetime,'_'); 
 
-    date = parts{1};
-    date = sprintf('20%s-%s-%s', date(1:2), date(3:4), date(5:6)); 
+date = parts{1};
+date = sprintf('20%s-%s-%s', date(1:2), date(3:4), date(5:6)); 
 
-    time = parts{2};
-    time = sprintf('%s-%s-%s', time(1:2), time(3:4), time(5:6)); 
+time = parts{2};
+time = sprintf('%s-%s-%s', time(1:2), time(3:4), time(5:6)); 
 
-    site = regexp(infile, '(?<=(site))\d{2}','match','once');
-    neuron = regexp(infile, '(?<=(neuron))\d{1}','match','once');
+site = regexp(infile, '(?<=(site))\d{2}','match','once');
+neuron = regexp(infile, '(?<=(neuron))\d{1}','match','once');
 
-    basefile = sprintf('nev_%s_%s_do%s_*_su%s.mat', date, time, site, neuron); 
+basefile = sprintf('nev_%s_*_do%s_*_su%s.mat', date, site, neuron); 
 
-    fullfile(folder, basefile)
+dnev = dir(fullfile(folder, basefile));
 
-    dnev = dir(fullfile(folder, basefile));
-
-    if length(dnev)==0
-        error('No nev files in folder.');
-    elseif ( length(dnev)>1 )
-        error('More than one nev file matches the iskfile.');
-    else
-        outfile = dnev.name;
-    end
-
-    nevfiles{i} = outfile;
-
+if length(dnev)==0
+    nevfile = 'none';
+elseif ( length(dnev)>1 )
+    nevfile = {dnev.name};
+    warning(sprintf('More than one nev file matches %s',infile));
+else
+    nevfile = dnev.name;
 end
 
-if length(nevfiles) == 1
-    nevfiles = nevfiles{1};
-end
 
 return;
 

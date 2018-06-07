@@ -1,59 +1,41 @@
-function mid_dir_plot_filter_fio2d(datapath, savepdf, batch)
-%mid_dir_plot_filter_fio2d
+function sm_mid_dir_plot_filter_fio2d(varargin)
+% sm_mid_dir_plot_filter_fio2d Plot MID filters and 1D/2D nonlinearities
 %
-%    mid_dir_plot_filter_fio2d(datapath, savepdf, batch)
+%    sm_mid_dir_plot_filter_fio2d(keyword, value, ...)
 % 
-%    mid_dir_pdf_plot_filter_fio2d(datapath, savepdf, batch) goes through 
-%    the folder datapath and searches for *-filter-fio.mat files.
-%    It then plots the filters and nonlineaities within the folder,
-%    converts the figures to pdf files, and saves the pdfs in the
-%    folder figpath.
+%    sm_mid_dir_pdf_plot_filter_fio2d goes through the current directory 
+%    and searches for *-filter-fio.mat files.
+%       
+%    It then plots the filters and nonlineaities within the folder.
 %
-%    datapath : folder holding *-filter-fio.mat files. The files
-%    hold filters and nonlinearities for single neurons.
-%    Default = '.'
-% 
-%    savepdf : Save figures to pdf files? savepdf = 1 = yes. Default = no.
+%    sm_mid_dir_plot_filter_fio2d accepts keyword/value arguments.
 %
-%    gspath : complete path to Ghostscript executable. Default is
-%        gspath = 'C:\Program Files (x86)\gs\gs9.19\bin\gswin32c.exe';
-%    This input is generally not needed, since the default has been 
-%    set during ghostscript installation.
+%       keyword         value
+%       ==============================================================
+%       'savepdf'       Default = 0. If 1, then the figures are saved.
+%
+%       'batch'         Default = 0. If 1, then the function is assumed
+%                       to be run outside of data folders.
+%
+%       'process'       Overwrite existing files? Default = 0 = NO. 
+%                       Set to 1 to overwrite files with the same name.
+%
+%       Note: ghostscript is required and thus must be installed.
+%
+%    Default assumed location is 
+%       gspath = 'C:\Program Files (x86)\gs\gs9.19\bin\gswin32c.exe';
 %    
 
 library('export_fig');
 
-narginchk(0,3);
+graphics_toolkit('qt');
 
 
-if nargin == 0
-    datapath = '.';
-    savepdf = 0;
-    batch = 0;
-end
+narginchk(0,4);
 
-if nargin == 1
-    savepdf = 0;
-    batch = 0;
-end
+options = struct('savepdf', 0, 'batch', 0, 'process', 0);
 
-if nargin == 2
-    batch = 0;
-end
-
-
-if isempty(datapath)
-    datapath = '.';
-end
-
-if isempty(savepdf)
-    savepdf = 0;
-end
-
-if isempty(batch)
-    batch = 0;
-end
-
+options = input_options(options, varargin);
 
 
 figpath = '.';
@@ -62,7 +44,7 @@ gsfile = 'gswin64c.exe';
 gspath = fullfile(gsdir, gsfile);
 
 
-if ( batch )
+if ( options.batch )
     folders = get_directory_names;
 else
     folders = {'.'};
@@ -74,29 +56,28 @@ for ii = 1:length(folders)
 
     cd(folders{ii});
 
-    dfilters = dir(fullfile(datapath, '*-filter-fio.mat'));
-    if isempty(dfilters)
-        %fprintf('\nNo *-filter-fio.mat files in %s.\n\n', folders{ii});
-    end
+    dfilters = dir(fullfile('.', '*-filter-fio.mat'));
 
-    matfiles = {dfilters.name};
+    if ~isempty(dfilters)
 
-    pdf_file_total = {};
+        matfiles = {dfilters.name};
 
-    for i = 1:length(matfiles)
-       
-        fprintf('\nPlotting %s\n', matfiles{i});
+        pdf_file_total = {};
 
-        [pathstr, name, ext] = fileparts(matfiles{i});
-        
-        eps_file = fullfile(figpath, sprintf('%s.eps',name));
-        pdf_file = fullfile(figpath, sprintf('%s12.pdf',name));
-       
-        pdf_file_total{length(pdf_file_total)+1} = pdf_file;
+        for i = 1:length(matfiles)
+           
+            fprintf('\nPlotting %s\n', matfiles{i});
 
-        load(matfiles{i}, 'data');
-        
-        if ( 1 ) %~exist(pdf_file,'file') )
+            [pathstr, name, ext] = fileparts(matfiles{i});
+            
+            eps_file = fullfile(figpath, sprintf('%s2d.eps',name));
+            pdf_file = fullfile(figpath, sprintf('%s2d.pdf',name));
+
+            if ( exist(eps_file) && exist(pdf_file) && ~options.process ) 
+                continue;
+            end 
+           
+            load(matfiles{i}, 'data');
             
             mid_plot_filter_fio(data);
             colormap jet;
@@ -104,38 +85,29 @@ for ii = 1:length(folders)
             
             clear('data');
            
-            if ( savepdf ) 
+            if ( options.savepdf )
+
                 fig2eps(eps_file);
                 pause(0.5);
-                %eps2pdf1(eps_file, gspath);
-                crop = 1;
+                crop = 0;
                 append = 0;
                 gray = 0;
                 quality = 1000;
                 eps2pdf(eps_file, pdf_file, crop, append, gray, quality);
                 pause(0.5);
-                %delete(eps_file);
                 pause(0.5)
                 close all;
                 fprintf('Figure saved in: %s\n\n', pdf_file);
+            else
+                pause;
             end
 
-        else
-            %fprintf('Figure already saved in: %s\n\n', pdf_file);
-            mid_plot_filter_fio(data);
-            orient portrait;
-            orient tall;
-        end
-        
-    end % (for i)
+        end % (for i)
+    else
 
-    if ( savepdf )
-        pdf_file_combined = sprintf('mid_filter_fio12.pdf');
-        pdf_file_combined = fullfile(figpath, pdf_file_combined);
-        for n = 1:length(pdf_file_total)
-            append_pdfs(pdf_file_combined, pdf_file_total{n}); 
-        end
-    end
+        fprintf('No *-filter-fio.mat files in %s\n', folders{ii});
+
+    end % ( ~isempty )
 
     cd(startdir)
 
@@ -144,6 +116,15 @@ end % (for ii)
 return;
 
 
+
+
+%     if ( savepdf )
+%         pdf_file_combined = sprintf('mid_filter_fio12.pdf');
+%         pdf_file_combined = fullfile(figpath, pdf_file_combined);
+%         for n = 1:length(pdf_file_total)
+%             append_pdfs(pdf_file_combined, pdf_file_total{n}); 
+%         end
+%     end
 
 
 
@@ -181,37 +162,58 @@ mid12_fio_ior_std = data.fio_mid12.pspkx1x2_std;
 
 
 hf = figure;
-set(hf,'position', [680 100 560 800]);
+set(hf,'position', [680 300 500 400]);
 orient portrait;
 orient tall;
 
 
-subplot(4,2,1);
+subplot(3,3,1);
 imagesc(sta_filt);
 tickpref;
-title(sprintf('STA; nspk=%.0f, ndim=%.0f, nspk/ndim=%.2f', ...
-    nspk, nf_filter*nt_filter, nspk / (nf_filter*nt_filter)));
+%title(sprintf('STA; nspk=%.0f, ndim=%.0f, nspk/ndim=%.2f', ...
+%    nspk, nf_filter*nt_filter, nspk / (nf_filter*nt_filter)));
+title(sprintf('STA; nspk=%.0f', nspk));
+ylabel('Frequency (kHz)');
 minmin = min(min(sta_filt));
 maxmax = max(max(sta_filt));
 boundary = max([abs(minmin) abs(maxmax)]);
 set(gca,'ydir', 'normal');
 set(gca, 'clim', [-1.05*boundary-eps 1.05*boundary+eps]);
+xtick = [1 size(sta_filt,2)];
+set(gca,'xtick', xtick, 'xticklabel', xtick);
+ytick = [1 size(sta_filt,1)];
+set(gca,'ytick', ytick, 'yticklabel', ytick);
 
 
+ms = 3;
+lw = 1;
 
-subplot(4,2,2);
+subplot(3,3,4);
 hold on;
-plot(sta_fio_x, sta_fio_ior, 'ko-', 'markerfacecolor', 'k');
-xlim([1.1*min(sta_fio_x) 1.1*max(sta_fio_x)]);
-ylim([0 1.1*max(sta_fio_ior)]);
-plot(xlim, [pspk pspk], 'k--');
-tickpref;
-title('STA Nonlinearity');
+x = sta_fio_x;
+fx = sta_fio_ior; 
+
+if ( ~isempty(x) && ~isempty(fx) && length(x)==length(fx) )
+    plot(x,fx,'ko-','markerfacecolor','k','markersize',ms,'linewidth',lw);
+    xlim([1.1*min(x) 1.1*max(x)]);
+    if ~isempty(pspk)
+        plot(xlim, [pspk pspk], 'k--');
+    end
+    ymax = max(fx);
+    ymax = ceil(ymax*10) / 10;
+    ytick = [0 ymax/2 ymax];
+    set(gca,'ytick', ytick, 'yticklabel', ytick);
+    ylim([0 1.1*max(ytick)]);
+    tickpref;
+    ylabel('Spike Probability');
+    xtick = [round(min(x)) 0 round(max(x))];
+    set(gca,'xtick', xtick, 'xticklabel', xtick);
+end
 
 
    
 
-subplot(4,2,3);
+subplot(3,3,2);
 imagesc(mid1_filt);
 tickpref;
 title('MID1');
@@ -220,19 +222,38 @@ maxmax = max(max(mid1_filt));
 boundary = max([abs(minmin) abs(maxmax)]);
 set(gca,'ydir', 'normal');
 set(gca, 'clim', [-1.05*boundary-eps 1.05*boundary+eps]);
+xtick = [1 size(mid1_filt,2)];
+set(gca,'xtick', xtick, 'xticklabel', xtick);
+ytick = [1 size(mid1_filt,1)];
+set(gca,'ytick', ytick, 'yticklabel', ytick);
+xlabel('Time (ms)');
 
 
-subplot(4,2,4);
+subplot(3,3,5);
 hold on;
-plot(mid1_fio_x, mid1_fio_ior, 'ko-', 'markerfacecolor', 'k');
-xlim([1.1*min(mid1_fio_x) 1.1*max(mid1_fio_x)]);
-ylim([0 1.1*max(mid1_fio_ior)]);
-plot(xlim, [pspk pspk], 'k--');
-tickpref;
-title('MID1 Nonlinearity');
+x = mid1_fio_x;
+fx = mid1_fio_ior;
+
+if ( ~isempty(x) && ~isempty(fx) && length(x)==length(fx) )
+    plot(x,fx,'ko-','markerfacecolor','k','markersize',ms,'linewidth',lw);
+    xlim([1.1*min(x) 1.1*max(x)]);
+    if ~isempty(pspk)
+        plot(xlim, [pspk pspk], 'k--');
+    end
+    ymax = max(fx);
+    ymax = ceil(ymax*10) / 10;
+    ytick = [0 ymax/2 ymax];
+    set(gca,'ytick', ytick, 'yticklabel', ytick);
+    ylim([0 1.1*max(ytick)]);
+    tickpref;
+    xtick = [round(min(x)) 0 round(max(x))];
+    set(gca,'xtick', xtick, 'xticklabel', xtick);
+    xlabel('Projection (ms)');
+end
 
 
-subplot(4,2,5);
+
+subplot(3,3,3);
 imagesc(mid2_filt);
 tickpref;
 title('MID2');
@@ -241,16 +262,32 @@ maxmax = max(max(mid2_filt));
 boundary = max([abs(minmin) abs(maxmax)]);
 set(gca,'ydir', 'normal');
 set(gca, 'clim', [-1.05*boundary-eps 1.05*boundary+eps]);
+xtick = [1 size(mid2_filt,2)];
+set(gca,'xtick', xtick, 'xticklabel', xtick);
+ytick = [1 size(mid2_filt,1)];
+set(gca,'ytick', ytick, 'yticklabel', ytick);
 
 
-subplot(4,2,6);
+subplot(3,3,6);
 hold on;
-plot(mid2_fio_x, mid2_fio_ior, 'ko-', 'markerfacecolor', 'k');
-xlim([1.1*min(mid2_fio_x) 1.1*max(mid2_fio_x)]);
-ylim([0 1.1*max(mid2_fio_ior)]);
-plot(xlim, [pspk pspk], 'k--');
-tickpref;
-title('MID2 Nonlinearity');
+x = mid2_fio_x;
+fx = mid2_fio_ior; 
+
+if ( ~isempty(x) && ~isempty(fx) && length(x)==length(fx) )
+    plot(x,fx,'ko-','markerfacecolor','k','markersize',ms,'linewidth',lw);
+    xlim([1.1*min(x) 1.1*max(x)]);
+    if ~isempty(pspk)
+        plot(xlim, [pspk pspk], 'k--');
+    end
+    ymax = max(fx);
+    ymax = ceil(ymax*10) / 10;
+    ytick = [0 ymax/2 ymax];
+    set(gca,'ytick', ytick, 'yticklabel', ytick);
+    ylim([0 1.1*max(ytick)]);
+    tickpref;
+    xtick = [round(min(x)) 0 round(max(x))];
+    set(gca,'xtick', xtick, 'xticklabel', xtick);
+end
 
 
 
@@ -262,15 +299,15 @@ mid12_fio_x2 = data.fio_mid12.x2_mean;
 mid12_fio_ior = data.fio_mid12.pspkx1x2_mean;
 mid12_fio_ior_std = data.fio_mid12.pspkx1x2_std;
 
-subplot(4,2,7);
+subplot(3,3,8);
 pspkx1x2 =  mid12_fio_ior + 0.001;
 mxmx = max(pspkx1x2(:));
-imagesc(mid12_fio_x2, mid12_fio_x2,  log10(pspkx1x2));
+imagesc(mid12_fio_x1, mid12_fio_x2,  log10(pspkx1x2));
 set(gca,'clim', [-3 log10(mxmx)]);
-set(gca,'tickdir', 'out');
+tickpref;
 
-xlabel('MID1 Proj');
-ylabel('MID2 Proj');
+xlabel('MID1 Projection (SD)');
+ylabel('MID2 Projection (SD)');
 
 axis('xy');
 hc = colorbar('EastOutside');
@@ -282,8 +319,6 @@ hc = colorbar('EastOutside');
 set(hc,'ytick', [log10(0.001) log10(mxmx)], ...
        'yticklabel', [0.001 roundsd(mxmx,3)], ...
        'Position', [0.5 0.11 0.02 0.15], 'tickdir', 'out');
-
-title('P(spike|x1,x2)');
 
 
 

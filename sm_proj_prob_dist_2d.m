@@ -8,7 +8,7 @@ function [x1binedges, x2binedges, pspk, px1x2, px1x2spk, pspkx1x2] = ...
 % a spike given a projection value. This last distribution is the 
 % nonlinearity for a neuron.
 %
-% [xbins, pspk, px1x2, px1x2spk, pspkx1x2] = proj_prob_dist_2d(xtrain_locator, xtrain_mid1, xtrain_mid2)
+% [xbins, pspk, px1x2, px1x2spk, pspkx1x2] = sm_proj_prob_dist_2d(xtrain_locator, xtrain_mid1, xtrain_mid2)
 % ------------------------------------------------------------------------
 %
 % Input arguments:
