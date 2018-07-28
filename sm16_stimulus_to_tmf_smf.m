@@ -4,20 +4,24 @@ function [sprtmf, sprsmf] = sm_stimulus_to_tmf_smf(stimulus, nlags, taxis, faxis
 %    [sprtmf, sprsmf] = sm_stimulus_to_tmf_smf(stimulus, nlags, taxis, faxis)
 %    
 %    stimulus : Ntrials x Ndim stimulus matrix. Each row is one stimulus trial.
+%       Saved in: dmr-50flo-40000fhi-4SM-150TM-40db-96kHz-96DF-30min_DFt5_DFf8-matrix.mat
 %    
 %    nlags : number of time bins in each trial. This should match the number
 %       used in sta or mid calculations.
 %       
 %    taxis : temporal axis of stimulus or filter.
+%       Saved in: dmr-50flo-40000fhi-4SM-150TM-40db-96kHz-96DF-30min_DFt5_DFf8_param.mat
 %    
 %    faxis : spectral axis of stimulus or filter.
+%       Saved in: dmr-50flo-40000fhi-4SM-150TM-40db-96kHz-96DF-30min_DFt5_DFf8_param.mat
 %
 %    sprtmf : peak temporal modulation value during the stimulus trial frame.
 %    sprsmf : peak spectral modulation value.
+%
+%    sprtmf and sprsmf are saved in:
+%       dmr-50flo-40000fhi-4SM-150TM-40db-96kHz-96DF-30min_DFt5_DFf8-mtf-hires.mat 
 %    
-
 fprintf('%s\n', mfilename);
-
 
 sprtmf = zeros(1, size(stimulus,2));
 sprsmf = zeros(1, size(stimulus,2));

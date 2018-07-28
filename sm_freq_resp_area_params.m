@@ -35,8 +35,6 @@ set(data_figure, 'position', [0.5*ss(3) 0.4*ss(4) 0.4*ss(3) 0.5*ss(4)]);
 
 for n = 1:length(fra)
 
-    try
-
         fra_unit = fra(n);
         freq = fra_unit.freq / 1000;
         atten = -fra_unit.atten;
@@ -46,9 +44,10 @@ for n = 1:length(fra)
         fmin = min(uf) .* 2.^ (-doct);
         fmax = max(uf) .* 2.^ (doct);
 
-        amin = min(atten);
-        amax = max(atten);
-        da = abs(atten(2) - atten(1));
+        ua = unique(atten);
+        amin = min(ua);
+        amax = max(ua);
+        da = abs(ua(2) - ua(1));
 
         resp = fra_unit.spkcount;
 
@@ -57,9 +56,9 @@ for n = 1:length(fra)
         plot_tms_nev_fra(fra_unit);
 
         fprintf('Choose threshold, or click outside to skip.\n');
-        [cf, thr] = ginput(1)
+        [cf, thr] = ginput(1);
 
-        if ( cf>fmin && cf<fmax && thr>(amin-da) && thr<amax )
+        if ( cf>fmin && cf<fmax && thr>(amin-da) && thr<(amax+da) )
 
             fprintf('Processing FRA.\n');
 
@@ -134,9 +133,9 @@ for n = 1:length(fra)
                  end % (for j)
 
                 fprintf('\nSatisfied? Click inside FRA, or click outside to redo.\n');
-                [x,y] = ginput(1)
+                [x,y] = ginput(1);
 
-                if ( x>fmin && x<fmax && y>amin && y<amax )
+                if ( x>fmin && x<fmax && y>(amin-da) && y<(amax+da) )
                     satisfied = 1;
                     clf(data_figure);
                 else
@@ -182,21 +181,21 @@ for n = 1:length(fra)
 
         end % (if-else)
 
-    catch
-        fprintf('catch clause.\n');
-        params(n).maxamp = maxamp;
-        params(n).cf = -9999;
-        params(n).threshold = -9999;
-        params(n).latency = -9999;
-        params(n).bw10 = -9999*ones(1,2);
-        params(n).bw20 = -9999*ones(1,2);
-        params(n).bw30 = -9999*ones(1,2);
-        params(n).bw40 = -9999*ones(1,2);
-        params(n).rlcurve = -9999;
-        params(n).level = -9999;
-        params(n).rate = -9999;
-
-    end_try_catch
+%    catch
+%        fprintf('catch clause.\n');
+%        params(n).maxamp = maxamp;
+%        params(n).cf = -9999;
+%        params(n).threshold = -9999;
+%        params(n).latency = -9999;
+%        params(n).bw10 = -9999*ones(1,2);
+%        params(n).bw20 = -9999*ones(1,2);
+%        params(n).bw30 = -9999*ones(1,2);
+%        params(n).bw40 = -9999*ones(1,2);
+%        params(n).rlcurve = -9999;
+%        params(n).level = -9999;
+%        params(n).rate = -9999;
+%
+%    end_try_catch
 
 end % (for n)
 

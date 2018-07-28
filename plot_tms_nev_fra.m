@@ -1,4 +1,4 @@
-function plot_tms_nev_fra(fra, maxamp)
+function plot_tms_nev_fra(fra, varargin)
 %    plot_tms_fra Plot TMS style frequency response area
 %    
 %    plot_tms_fra(fra) 
@@ -6,15 +6,32 @@ function plot_tms_nev_fra(fra, maxamp)
 %       fra : struct holding frequency response data.
 %               Assumes that maximum SPL is 95.
 %
-%    plot_tms_fra(fra, maxamp) 
+%    plot_tms_fra(fra, 'maxaxmp', maxamp) 
 %               Sets maximum SPL to maxamp.
 %
+%    plot_tms_fra(fra, 'xdf', xdf)
+%       plot every xdf'th frequency value for xaxis tickmarks
+%
+%    plot_tms_fra(fra, 'ydf', ydf)
+%       plot every ydf'th frequency value for yaxis tickmarks
+
 
 fprintf('%s\n', mfilename);
 
 graphics_toolkit('qt');
 
-narginchk(1,2);
+narginchk(1,7);
+
+options = struct(...
+'maxamp', 0, ...
+'xdf', 7, ...
+'ydf', 1);
+
+options = input_options(options, varargin);
+
+maxamp = options.maxamp;
+xdf = options.xdf;
+ydf = options.ydf;
 
 freq = fra.freq;
 atten = fra.atten;
@@ -27,11 +44,7 @@ end
 spikecount = fra.spkcount;
 f = freq;
 
-if nargin == 1
-    a = atten;
-else
-    a = atten + maxamp;
-end
+a = atten + maxamp;
 
 if ( max(f) > 1000 )
     f = f / 1000;
@@ -44,11 +57,14 @@ ua = unique(a);
 ua = ua(:)';
 da = ua(2) - ua(1);
 
-xtick = roundsd(uf(1:7:end),2);
+xtick = roundsd(uf(1:xdf:end),2);
 doct = log2(uf(2)/uf(1));
 fmin = min(f) .* 2.^ (-doct);
 fmax = max(f) .* 2.^ (doct);
 
+temp = fliplr(ua);
+ytick = temp(1:ydf:end);
+ytick = fliplr(ytick);
 
 % Scale based on quantiles/percentiles???
 
@@ -76,7 +92,8 @@ end
 set(gca, 'xtick', xtick, 'xticklabel', xtick);
 set(gca,'xscale', 'log');
 xlim([fmin fmax]);
-set(gca, 'ytick', ua, 'yticklabel', ua);
+
+set(gca, 'ytick', ytick, 'yticklabel', ytick);
 ylim([min(ua)-da max(ua)+da]);
 
 

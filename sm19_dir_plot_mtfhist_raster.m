@@ -1,4 +1,4 @@
-function sm_dir_plot_fra_sta_mtfhist_raster(varargin)
+function sm_dir_plot_mtfhist_raster(varargin)
 % sm_mid_dir_plot_sta_sprtmf_smf 2D Spike-triggered modulation frequencies
 %
 % sm_mid_dir_plot_sta_sprtmf_smf(kwargs) plots the sta and 2D MTFs for each
@@ -14,26 +14,23 @@ function sm_dir_plot_fra_sta_mtfhist_raster(varargin)
 % Arguments are keyword/values:
 %   Keyword        Value
 %   ===============================
-%   'stimulus'     matrix of spr envelope. Required. Default: []. dmr-50flo-40000fhi-4SM-150TM-40db-96kHz-96DF-30min_DFt5_DFf8-mtf-hires.mat
-%   'sprtmf'       vector of stimulus frame tmf values. Required. Default: []. dmr-50flo-40000fhi-4SM-150TM-40db-96kHz-96DF-30min_DFt5_DFf8-mtf-hires.mat
-%   'sprsmf'       vector of stimulus frame smf values. Required. Default: []. dmr-50flo-40000fhi-4SM-150TM-40db-96kHz-96DF-30min_DFt5_DFf8-mtf-hires.mat
+%   'stimulus'     matrix of spr envelope. Required. 
+%                      Default: []. dmr-50flo-40000fhi-4SM-150TM-40db-96kHz-96DF-30min_DFt5_DFf8-mtf-hires.mat
+%
+%   'sprtmf'       vector of stimulus frame tmf values. Required. 
+%                      Default: []. dmr-50flo-40000fhi-4SM-150TM-40db-96kHz-96DF-30min_DFt5_DFf8-mtf-hires.mat
+%
+%   'sprsmf'       vector of stimulus frame smf values. Required. 
+%                      Default: []. dmr-50flo-40000fhi-4SM-150TM-40db-96kHz-96DF-30min_DFt5_DFf8-mtf-hires.mat
+%
 %   'figdir'       where to save figures. Default: '.', the current directory. 
+%
 %   'batch'        process multiple folders? Default: 0, no we are inside a single folder. 
+%
 %   'process'      process data and overwrite any saved files? Default: 0, no.
+%
 %   'repfolder'    directory holding responses to dmr repeated stimulus.
 %                  Default: K:\SM_MIDs\SM_data_dmrrepeat
-%
-%options = struct('stimulus', [], ...
-%                 'sprtmf', [], ...
-%                 'sprsmf', [], ...
-%                 'figdir', '.', ...
-%                 'batch', 0, ...
-%                 'process', 0, ...
-%                 'repfolder', 'K:\SM_MIDs\SM_data_dmrrepeat', ...
-%                 'longfolder', 'K:\SM_MIDs\SM_data_dmrlong', ...
-%                 'frafolder', 'K:\SM_FRA', ...
-%                 'filestr', []);
-%
 %
 % 
 %   Note: ghostscript must be on the computer and is assumed to be in:
@@ -44,13 +41,16 @@ function sm_dir_plot_fra_sta_mtfhist_raster(varargin)
 
 
 
+longfilefolder = 'I:\SM_data\nhp_su_sta_dmr\PSTH_sig';
+repfilefolder = 'I:\SM_data\nhp_su_repeated_dmr';
+
 graphics_toolkit('gnuplot');
 
 library('export_fig');
 
 close all;
 
-narginchk(4,20);
+narginchk(4,10);
 
 options = struct('stimulus', [], ...
                  'sprtmf', [], ...
@@ -58,11 +58,7 @@ options = struct('stimulus', [], ...
                  'figdir', '.', ...
                  'batch', 0, ...
                  'process', 0, ...
-                 'repfolder', 'K:\SM_MIDs\SM_data_dmrrepeat', ...
-                 'longfolder', 'K:\SM_MIDs\SM_data_dmrlong', ...
-                 'frafolder', 'K:\SM_FRA', ...
-                 'filestr', []);
-
+                 'repfolder', 'K:\SM_MIDs\SM_data_dmrrepeat');
 options = input_options(options, varargin);
 
 assert(~isempty(options.sprtmf), 'Please input sprtmf.');
@@ -74,14 +70,6 @@ sprsmf = options.sprsmf;
 figdir = options.figdir;
 stimulus = options.stimulus;
 repfolder = options.repfolder;
-longfolder = options.longfolder;
-frafolder = options.frafolder;
-
-if ( isempty(options.filestr) )
-    error('Please provide filestr');
-else
-    filestr = options.filestr;
-end
 
 assert(length(sprtmf) == length(sprsmf), 'sprtmf and sprsmf lengths dont match.');
 assert(length(sprtmf) == size(stimulus,2), 'sprtmf, sprsmf, and stimulus lengths dont match.');
@@ -103,28 +91,14 @@ for ii = 1:length(folders)
 
     cd(folders{ii});
 
-    iskfiles_folder = dir('*.isk');
-    iskfiles_folder = {iskfiles_folder.name};
+    iskfiles = dir('*.isk');
+    iskfiles = {iskfiles.name};
 
-    for i = 1:length(iskfiles_folder)
+    for i = 1:length(iskfiles)
 
-        iskfile = iskfiles_folder{i};
+        fprintf('Processing %s\n', iskfiles{i});
 
-        fprintf('Processing %s\n', iskfile);
-
-        for j = 1:length(filestr)
-            if ( strcmp(filestr(j).iskfile, iskfile) )
-                nev_rep_file = filestr(j).nevfile_rep;
-                nev_long_file = filestr(j).nevfile_long;
-                nev_fra_file = filestr(j).frafile;
-            end
-        end % (for j)
-
-        if ( strcmp(lower(nev_fra_file), 'none') )
-            continue;
-        end
-
-        basefile = strrep(iskfile, '.isk', '-fra-sta-mtf-raster');
+        basefile = strrep(iskfiles{i}, '.isk', '-mtf-highres-raster');
         eps_file = fullfile(figdir, sprintf('%s.eps', basefile));
         pdf_file = fullfile(figdir, sprintf('%s.pdf', basefile));
         d = dir(pdf_file);
@@ -134,15 +108,7 @@ for ii = 1:length(folders)
             continue;
         end
 
-        load(fullfile(frafolder, nev_fra_file), 'nevstruct', 'trigstruct'); 
-        load(fullfile(frafolder, 'tcparams.mat'), 'params');
-        spiketimes = nevstruct.tspk_ms;
-        triggers = trigstruct.trig_ms;
-        start = 0;
-        stop = 50;
-        fra = sm_fra_nev(spiketimes, triggers, start, stop, params);
-
-        locator = sm_isk_file_to_locator(iskfile);
+        locator = sm_isk_file_to_locator(iskfiles{i});
         locator = locator(:)';
         assert(length(locator) == size(stimulus,2), 'locator and stimulus dont match.');
         nlags = 20;
@@ -151,24 +117,20 @@ for ii = 1:length(folders)
         ntrials = length(locator);
         shiftsize = round(ntrials/2);
         locator_rand = circshift(locator, shiftsize, 2);
-        %starand = get_sta_from_locator(locator_rand, stimulus, nlags);
+        starand = get_sta_from_locator(locator_rand, stimulus, nlags);
 
         assert(length(locator) == length(sprtmf), 'locator and sprtmf have different lengths.');
         assert(length(sprtmf) == length(sprsmf), 'sprtmf and sprsmf have different lengths.');
+        titlestring = strrep(iskfiles{i},'_', '-');
 
-        nevfile = sm_iskfile_to_dmrrep_nevfile(iskfile, repfolder);
+
+        nevfile = sm_iskfile_to_dmrrep_nevfile(iskfiles{i}, repfolder);
 
         load(fullfile(repfolder, nevfile), 'nevstruct', 'trigstruct')
         raster = sm_calc_rep_raster(nevstruct,trigstruct,5);
 
-
-        %sm_plot_sta_tmf_smf_raster('locator', locator, 'sprtmf', sprtmf, 'sprsmf', sprsmf, ...
-        %    'sta', sta, 'starand', starand, 'titlestring', titlestring, 'raster', raster, 'nevfile', nevfile);
-
-
-        sm_plot_fra_sta_mtfhist_raster('locator', locator, 'sprtmf', sprtmf, 'sprsmf', sprsmf, ...
-            'sta', sta, 'nevfra', fra, 'iskfile', iskfile, 'raster', raster, ...
-            'repfile', nev_rep_file, 'longfile', nev_long_file, 'frafile', nev_fra_file);
+        sm_plot_sta_tmf_smf_raster('locator', locator, 'sprtmf', sprtmf, 'sprsmf', sprsmf, ...
+            'sta', sta, 'starand', starand, 'titlestring', titlestring, 'raster', raster, 'nevfile', nevfile);
 
         fig2eps(eps_file);
         pause(1);

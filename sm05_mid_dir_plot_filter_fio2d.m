@@ -86,7 +86,6 @@ for ii = 1:length(folders)
             clear('data');
            
             if ( options.savepdf )
-
                 fig2eps(eps_file);
                 pause(0.5);
                 crop = 0;

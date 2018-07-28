@@ -73,7 +73,8 @@ for ii = 1:length(folders)
 
         iskfile = iskfiles_folder{i};
 
-        fprintf('Processing %s\n', iskfile);
+        fprintf('Folder %.0f of %.0f, File %.0f of %.0f: Processing %s\n', ...
+            ii, length(folders), i, length(iskfiles_folder), iskfile);
 
         for j = 1:length(filestr)
             if ( strcmp(filestr(j).iskfile, iskfile) )

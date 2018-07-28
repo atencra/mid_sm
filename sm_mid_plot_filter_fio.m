@@ -1,7 +1,7 @@
 function sm_mid_plot_filter_fio(data)
 %mid_plot_filter_fio Disply MID Filters/Nonlinearities
 %    
-%    mid_plot_filter_fio(data) plots the filters and nonlinearities stored
+%    mid_plot_filter_fio(data) plots the filters and 1D nonlinearities stored
 %    in the struct 'data'. data is stored in files having the form *-filter-fio.mat
 %    and is obtained with mid_dir_file_struct_to_filters.m
 %

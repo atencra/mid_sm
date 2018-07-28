@@ -1,5 +1,14 @@
 function sm_mid_plot_fioparams(fioparams)
-
+% sm_mid_plot_fioparams  SM nonlinearity asymmetry / separability
+%
+% sm_mid_plot_fioparams(fioparams)
+%
+%       fioparams : struct array holding 1D nonlinearity asymmetry and 
+%               2D nonlinearity separability for the STA and MIDs.
+%
+% Shows the CDFs of the asymmetries for each type of filter, and also
+% shows histograms of the values.
+%
 
 
 sta_asi = [fioparams.sta_asi];
